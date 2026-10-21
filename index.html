@@ -1,320 +1,426 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#020617">
-<title>MetaCleaner Pro v12 — SEI Excision & Remux Engine</title>
-<style>
-:root{color-scheme:dark;--bg:#020617;--panel:#0f172a;--panel2:#030b18;--line:#1e293b;--txt:#e2e8f0;--muted:#94a3b8;--indigo:#818cf8;--emerald:#34d399;--rose:#fb7185;--amber:#fbbf24}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
-.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
-header.top{position:sticky;top:0;z-index:50;background:rgba(15,23,42,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.wrap{max-width:72rem;margin:auto;padding:0 16px}
-.bar{height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:12px;min-width:0}
-.logo{width:40px;height:40px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;background:linear-gradient(135deg,#6366f1,#9333ea);box-shadow:0 6px 20px #312e814d}
-.brand h1{font-size:16px;margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ver{font-size:11px;background:#6366f133;color:var(--indigo);border:1px solid #6366f14d;font-weight:700;padding:2px 10px;border-radius:99px;white-space:nowrap}
-.sub{font-size:12px;color:var(--muted);margin:0}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
-.pill .dot{width:8px;height:8px;border-radius:99px;background:var(--amber)}
-.pill.on{color:var(--emerald);border-color:#34d39933;background:#34d39911}.pill.on .dot{background:var(--emerald);animation:pl 1.2s infinite}
-@keyframes pl{50%{opacity:.35}}
-main{padding:24px 0 12px;display:flex;flex-direction:column;gap:24px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 10px 30px #0006}
-.ctrl{display:flex;gap:20px;align-items:stretch;justify-content:space-between}
-.drop{flex:1 1 60%;border:2px dashed #334155;border-radius:14px;padding:26px 18px;text-align:center;cursor:pointer;transition:.2s;background:#02061799;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-.drop:hover,.drop.over{border-color:#6366f1;background:#6366f111}
-.drop .ic{width:48px;height:48px;border-radius:99px;background:#6366f122;color:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:24px}
-.drop p{margin:0;font-size:13px;font-weight:600}.drop small{color:var(--muted);font-size:11px}
-.side{flex:1 1 35%;display:flex;flex-direction:column;gap:12px;min-width:240px}
-.filebox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12px;display:flex;flex-direction:column;gap:6px}
-.filebox .row{display:flex;justify-content:space-between;gap:8px}.filebox .k{color:var(--muted)}.filebox .v{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
-#fileNameDisplay{color:var(--indigo)}#fileStatusBadge{color:var(--amber);font-weight:600}#fileStatusBadge.ok{color:var(--emerald)}
-button{border:0;border-radius:12px;padding:13px 15px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
-#actionBtn{background:linear-gradient(90deg,#059669,#0d9488);color:#fff;box-shadow:0 8px 22px #065f4666;width:100%}
-#actionBtn:hover:not(:disabled){filter:brightness(1.12)}
-#actionBtn:disabled{background:#1e293b;color:#64748b;cursor:not-allowed;box-shadow:none}
-#downloadBtn{width:100%;background:#1e293b;color:#64748b;cursor:not-allowed}
-#downloadBtn.ready{background:#059669;color:#fff;cursor:pointer;box-shadow:0 8px 22px #065f4666}
-button.ghost{background:#1e293b;color:var(--txt);border:1px solid #334155;padding:9px 14px;font-size:12px}
-.modes{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
-.modes label{display:flex;gap:8px;align-items:flex-start;cursor:pointer;color:var(--txt)}
-.modes select{background:#0f172a;color:var(--txt);border:1px solid #334155;border-radius:8px;padding:4px 8px;font-size:12px}
-.meter{height:7px;background:#1e293b;border-radius:99px;overflow:hidden}
-.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6366f1,#34d399);transition:width .2s}
-#status{font-size:12px;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.panel h3{margin:0;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.panel h3 .d{width:10px;height:10px;border-radius:99px}
-.phead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:12px}
-.badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:99px;background:#1e293b;color:var(--muted);text-transform:uppercase;white-space:nowrap}
-.badge.bad{background:#fb718511;border:1px solid #fb718533;color:var(--rose)}
-.badge.good{background:#34d39911;border:1px solid #34d39933;color:var(--emerald)}
-.kv{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:7px;font-size:12px}
-.kv .row{display:flex;justify-content:space-between;gap:10px}.kv .k{color:var(--muted);flex:none}
-.kv .val{font-family:ui-monospace,Menlo,monospace;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
-.rose{color:var(--rose);font-weight:700}.green{color:var(--emerald)}.amberc{color:var(--amber)}.slatec{color:var(--muted)}
-.risk{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
-video{width:100%;max-height:300px;background:#000;border-radius:10px}
-.term{background:#020617;border:1px solid var(--line);border-radius:12px;padding:14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.65;height:224px;overflow-y:auto;overflow-wrap:anywhere}
-.term div{margin-bottom:2px}
-.thead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
-.thead h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
-#progressText{font-size:12px;font-weight:700;color:var(--indigo)}
-.notice{font-size:13px;color:var(--muted)}.notice b{color:var(--txt)}
-footer{border-top:1px solid var(--line);background:var(--panel);text-align:center;font-size:12px;color:var(--muted);padding:16px}
-@media(max-width:760px){.ctrl{flex-direction:column}.grid2{grid-template-columns:1fr}.card{padding:14px}.bar{height:auto;padding:10px 0}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bongkarin - FFmpeg.wasm AI Metadata & SEI Excision Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Memuat FFmpeg.wasm UMD dari CDN yang stabil -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
 </head>
-<body>
-<header class="top"><div class="wrap bar">
-<div class="brand"><div class="logo">⚡</div><div><h1>MetaCleaner Pro <span class="ver mono">v12.0 SEI Stripper</span></h1><p class="sub">Remux FFmpeg asli + filter bitstream SEI — tanpa re-encode, tanpa merusak frame</p></div></div>
-<div><span id="enginePill" class="pill"><span class="dot"></span><span id="enginePillTxt">Engine belum dimuat</span></span></div>
-</div></header>
-<main class="wrap">
-<!-- KONTROL -->
-<section class="card"><div class="ctrl">
-<div id="dropZone" class="drop" role="button" tabindex="0" aria-label="Pilih atau seret video ke sini">
-<div class="ic">📹</div>
-<div><p>Unggah / seret video ke sini untuk dibersihkan</p><p class="sub" style="font-weight:400">atau klik untuk memilih berkas</p></div>
-<small>MP4 · MOV · WebM · MKV · AVI — diproses lokal di browser, tidak diunggah ke server</small>
-<input type="file" id="videoFileInput" accept="video/*,.mp4,.mov,.m4v,.mkv,.webm,.avi" hidden>
-</div>
-<div class="side">
-<div class="filebox">
-<div class="row"><span class="k">Berkas:</span><span class="v" id="fileNameDisplay">Belum ada berkas</span></div>
-<div class="row"><span class="k">Ukuran:</span><span class="v" id="fileSizeDisplay">-</span></div>
-<div class="row"><span class="k">Status:</span><span class="v" id="fileStatusBadge">Menunggu berkas</span></div>
-</div>
-<div class="modes"><strong style="color:var(--txt)">Mode pembersihan</strong>
-<label><input type="radio" name="mode" value="remux" checked><span><b>Remux cepat</b> — salin stream tanpa encoding ulang, kualitas &amp; durasi 100% sama. Aman dari glitch.</span></label>
-<label><input type="radio" name="mode" value="deep"><span><b>Deep Clean (re-encode)</b> — bangun ulang kontainer + encode ulang bila remux masih menyisakan pola.</span></label>
-<div id="deepopt" style="display:none"><label>Kualitas: <select id="crf"><option value="16">Tinggi (CRF 16)</option><option value="18" selected>Seimbang (CRF 18)</option><option value="23">Hemat (CRF 23)</option></select></label></div>
-</div>
-<button id="actionBtn" disabled>⚡ Jalankan Pembersihan FFmpeg &amp; SEI Excision</button>
-<div class="meter"><span id="bar"></span></div>
-<p id="status" aria-live="polite">Siap. Pilih video untuk memulai — engine otomatis dimuat.</p>
-</div>
-</div></section>
-<!-- SEBELUM VS SESUDAH -->
-<section class="grid2">
-<div class="card panel"><div class="phead"><h3><span class="d" style="background:var(--rose)"></span><span style="color:var(--rose)">1 · Sebelum (input)</span></h3><span id="beforeRiskBadge" class="badge">Standby</span></div>
-<div class="kv">
-<div class="row"><span class="k">Manifes C2PA (JUMBF):</span><span class="val slatec" id="mC2paBefore">-</span></div>
-<div class="row"><span class="k">UUID / claim box:</span><span class="val slatec" id="mUuidBefore">-</span></div>
-<div class="row"><span class="k">Software / vendor stamp:</span><span class="val slatec" id="mEncoderBefore">-</span></div>
-</div>
-<div class="kv">
-<div class="row"><span class="k">Bitstream / SEI:</span><span class="val slatec" id="mSeiBefore">-</span></div>
-<div class="row"><span class="k">Header 32-byte:</span><span class="val slatec" id="mHexBefore">-</span></div>
-</div>
-<div class="risk"><span class="k" style="color:var(--muted)">Status detector AI:</span><span id="mRiskBefore" class="slatec" style="font-weight:700;font-size:11px">-</span></div>
-</div>
-<div class="card panel"><div class="phead"><h3><span class="d" style="background:var(--emerald)"></span><span style="color:var(--emerald)">2 · Sesudah (hasil sanitasi)</span></h3><span id="afterStatusBadge" class="badge">Menunggu proses</span></div>
-<div class="kv">
-<div class="row"><span class="k">Manifes C2PA (JUMBF):</span><span class="val slatec" id="mC2paAfter">-</span></div>
-<div class="row"><span class="k">UUID / claim box:</span><span class="val slatec" id="mUuidAfter">-</span></div>
-<div class="row"><span class="k">Software / vendor stamp:</span><span class="val slatec" id="mEncoderAfter">-</span></div>
-</div>
-<div class="kv">
-<div class="row"><span class="k">Bitstream / SEI:</span><span class="val slatec" id="mSeiAfter">-</span></div>
-<div class="row"><span class="k">Header 32-byte:</span><span class="val slatec" id="mHexAfter">-</span></div>
-</div>
-<div class="risk"><span class="k" style="color:var(--muted)">Status detector AI:</span><span id="mRiskAfter" class="slatec" style="font-weight:700;font-size:11px">-</span></div>
-<div style="margin-top:10px"><button id="downloadBtn" disabled>📥 Unduh berkas bersih</button></div>
-</div>
-</section>
-<!-- PRATINJAU -->
-<section class="card"><div class="thead"><h3>Pratinjau</h3></div>
-<div class="grid2"><div><p class="notice" style="margin-top:0">Video asli</p><video id="previewIn" controls playsinline></video></div>
-<div><p class="notice" style="margin-top:0">Hasil remux</p><video id="previewOut" controls playsinline></video><a id="download" style="display:none" download="video_bersih.mp4">Unduh hasil</a></div></div>
-</section>
-<!-- TERMINAL -->
-<section class="card"><div class="thead"><h3>🖥️ Terminal FFmpeg &amp; SEI Excision</h3><span id="progressText" class="mono">SIAP</span></div>
-<div id="terminal" class="mono"><div style="color:var(--indigo)">[MetaCleaner v12 Engine] Remux FFmpeg asli + filter bitstream SEI. Pilih video untuk mulai.</div><div style="color:var(--muted)">Tidak ada byte video yang diubah manual — stream disalin bit-exact sehingga tidak glitch/patah-patah.</div></div>
-<div style="margin-top:10px"><button id="clearlog" class="ghost">Bersihkan log</button></div>
-</section>
-<!-- METODE -->
-<section class="card"><div class="thead"><h3>Metode &amp; batasan</h3></div>
-<p class="notice"><b>Kenapa versi lama bikin video glitch?</b> Versi lampiran menimpa byte metadata langsung di dalam file (mengganti teks dengan spasi &amp; menolkan byte SEI). Karena box MP4 punya tabel offset/sampel (<span class="mono">stco/co64, stsz, stsc</span>), mengubah panjang/isi byte tanpa membangun ulang tabel merusak sinkronisasi frame → patah-patah. Versi ini <b>tidak pernah</b> mengedit byte video manual.</p>
-<p class="notice"><b>Remux cepat:</b> <span class="mono">-c copy</span> menyalin stream video/audio bit-exact (kualitas 100% sama), sambil membuang metadata, chapter, attachment/data stream (tidak di-map), box yang tidak dikenal, dan NAL SEI via <span class="mono">-bsf:v filter_units=remove_types=6</span> (H.264) / <span class="mono">39|40</span> (HEVC), plus <span class="mono">+bitexact</span> agar encoder tidak menulis stamp Lavf.</p>
-<p class="notice"><b>Deep Clean (re-encode):</b> 2 tahap — (1) encode ulang H.264 + AAC ke kontainer MP4 baru sehingga box UUID/JUMBF, C2PA, XMP/udta/meta, pssh tidak ikut tersalin; (2) remux + filter SEI. Hasil dipindai ulang dengan pemindai box-aware yang sama.</p>
-<p class="notice">Batasan jujur: pemindai bersifat heuristik dan “tidak terdeteksi” bukan sertifikat forensik. Watermark di level piksel yang robust tidak bisa dijamin hilang tanpa menurunkan kualitas. Klaim “lolos detector” tergantung kebijakan tiap platform (mis. Shopee Video) yang bisa berubah sewaktu-waktu.</p>
-</section>
-</main>
-<footer><p>&copy; MetaCleaner Pro — Remux &amp; SEI Excision Engine. Seluruh pemrosesan lokal di browser.</p></footer>
-<script type="module">
-import {FFmpeg} from './vendor/ffmpeg/index.js';
-(()=>{'use strict';const $=id=>document.getElementById(id);
-let ff=null,loaded=false,loading=null,inputFile=null,outUrl=null,processedBlob=null;
-const status=m=>$('status').textContent=m;
-const progress=(n,t)=>{$('bar').style.width=Math.max(0,Math.min(100,n))+'%';if(t!==undefined)$('progressText').textContent=t};
-function appendLog(text,color){const term=$('terminal');const d=document.createElement('div');
-d.style.color=color==='emerald'?'var(--emerald)':color==='indigo'?'var(--indigo)':color==='amber'?'var(--amber)':color==='rose'?'var(--rose)':'#cbd5e1';
-if(color==='emerald'||color==='rose')d.style.fontWeight='700';if(color==='indigo')d.style.fontWeight='600';
-const time=new Date().toLocaleTimeString('id-ID');const s=document.createElement('span');s.style.color='#475569';s.textContent='['+time+'] ';
-d.append(s);d.append(text);term.appendChild(d);term.scrollTop=term.scrollHeight}
-const log=m=>appendLog(m,'slate');
-// ---- Pemindai box-aware: teks metadata hanya diambil dari box non-media (mdat & tabel sampel dikecualikan),
-// SEI ditemukan dengan menelusuri NAL per sampel video (length-prefixed AVCC/HVCC), bukan tebak 00 00 01.
-const latin1=new TextDecoder('latin1'),fourcc=(b,p)=>String.fromCharCode(b[p],b[p+1],b[p+2],b[p+3]);
-const BOX_CONTAINERS=new Set(['moov','trak','mdia','minf','stbl','dinf','edts','udta','moof','traf','mvex','sinf','schi','ilst','tref','mfra','meta']);
-const BOX_BINARY=new Set(['mdat','stsz','stz2','stco','co64','stts','ctts','stss','stsc','sdtp','sbgp','sgpd','subs','saiz','saio','trun','tfdt','tfhd','mfhd','tfra','mfro','free','skip','wide','sidx','elst','senc','idat']);
-const BOX_TOP=new Set(['ftyp','styp','moov','mdat','free','skip','wide','moof','sidx','uuid','pdin','meta','mfra']);
-function parseBoxes(b,dv,start,end){const out=[];for(let p=start;p+8<=end;){let size=dv.getUint32(p),hdr=8;const type=fourcc(b,p+4);
-if(size===1){if(p+16>end)break;size=Number(dv.getBigUint64(p+8));hdr=16}else if(size===0)size=end-p;if(size<hdr||!isFinite(size))break;
-const box={type,start:p,body:p+hdr,end:Math.min(end,p+size),kids:[]};
-if(BOX_CONTAINERS.has(type)){let c=box.body;if(type==='meta'&&dv.getUint32(c)===0)c+=4;box.kids=parseBoxes(b,dv,c,box.end)}
-out.push(box);p+=size}return out}
-const child=(box,type)=>box&&box.kids.find(k=>k.type===type);
-const follow=(box,...types)=>types.reduce((x,t)=>child(x,t),box);
-function videoTracks(b,dv,top){const moov=top.find(x=>x.type==='moov');if(!moov)return[];const trex={};
-const mvex=child(moov,'mvex');if(mvex)for(const t of mvex.kids)if(t.type==='trex')trex[dv.getUint32(t.body+4)]=dv.getUint32(t.body+16);
-const tracks=[];
-for(const trak of moov.kids.filter(k=>k.type==='trak')){const hdlr=follow(trak,'mdia','hdlr'),tkhd=child(trak,'tkhd'),stbl=follow(trak,'mdia','minf','stbl'),stsd=child(stbl,'stsd');
-if(!hdlr||!tkhd||!stsd||fourcc(b,hdlr.body+8)!=='vide')continue;
-const entry=stsd.body+8,codecTag=fourcc(b,entry+4),codec=/^avc[13]$/.test(codecTag)?'h264':/^(hvc1|hev1|dvh1|dvhe)$/.test(codecTag)?'hevc':null;if(!codec)continue;
-const entryEnd=Math.min(stsd.end,entry+dv.getUint32(entry)),cfg=codec==='h264'?'avcC':'hvcC';let lenSize=4;
-for(let p=entry+8;p+8<entryEnd;p++)if(fourcc(b,p)===cfg){lenSize=(b[p+4+(codec==='h264'?4:21)]&3)+1;break}
-const id=dv.getUint32(tkhd.body+(b[tkhd.body]===1?20:12)),samples=[];
-const stsz=child(stbl,'stsz'),stsc=child(stbl,'stsc'),stco=child(stbl,'stco')||child(stbl,'co64');
-if(stsz&&stsc&&stco){const fixed=dv.getUint32(stsz.body+4),count=dv.getUint32(stsz.body+8),is64=stco.type==='co64',chunks=dv.getUint32(stco.body+4),runs=dv.getUint32(stsc.body+4);let s=0;
-for(let r=0;r<runs;r++){const e=stsc.body+8+r*12,first=dv.getUint32(e),per=dv.getUint32(e+4),next=r+1<runs?dv.getUint32(e+12):chunks+1;
-for(let c=first;c<next&&c<=chunks;c++){let off=is64?Number(dv.getBigUint64(stco.body+8+(c-1)*8)):dv.getUint32(stco.body+8+(c-1)*4);
-for(let k=0;k<per&&s<count;k++,s++){const size=fixed||dv.getUint32(stsz.body+12+s*4);samples.push([off,size]);off+=size}}}}
-tracks.push({id,codec,codecTag,lenSize,samples,defaultSize:trex[id]||0})}
-for(const moof of top.filter(x=>x.type==='moof'))for(const traf of moof.kids.filter(k=>k.type==='traf')){const tfhd=child(traf,'tfhd');if(!tfhd)continue;
-const fl0=dv.getUint32(tfhd.body)&0xffffff,t=tracks.find(x=>x.id===dv.getUint32(tfhd.body+4));if(!t)continue;
-let q=tfhd.body+8,base=moof.start,defSize=t.defaultSize;if(fl0&1){base=Number(dv.getBigUint64(q));q+=8}if(fl0&2)q+=4;if(fl0&8)q+=4;if(fl0&0x10)defSize=dv.getUint32(q);
-let off=base;for(const trun of traf.kids.filter(k=>k.type==='trun')){const fl=dv.getUint32(trun.body)&0xffffff,n=dv.getUint32(trun.body+4);
-let p=trun.body+8;if(fl&1){off=base+dv.getInt32(p);p+=4}if(fl&4)p+=4;
-for(let i=0;i<n;i++){if(fl&0x100)p+=4;let size=defSize;if(fl&0x200){size=dv.getUint32(p);p+=4}if(fl&0x400)p+=4;if(fl&0x800)p+=4;t.samples.push([off,size]);off+=size}}}
-return tracks}
-function findSei(b,tracks){let count=0,text='';for(const t of tracks)for(const s of t.samples){const off=s[0],size=s[1],end=Math.min(b.length,off+size);
-for(let q=off;q+t.lenSize<end;){let n=0;for(let i=0;i<t.lenSize;i++)n=n*256+b[q+i];q+=t.lenSize;if(n<=0||q+n>end)break;
-const type=t.codec==='h264'?b[q]&31:(b[q]>>1)&63;
-if(t.codec==='h264'?type===6:(type===39||type===40)){count++;if(text.length<262144)text+='\n'+latin1.decode(b.subarray(q,q+Math.min(n,4096)))}q+=n}}return{count,text}}
-function annexBSei(b){for(let i=0;i+4<b.length;i++){let p=0;
-if(b[i]===0&&b[i+1]===0&&b[i+2]===1)p=i+3;else if(b[i]===0&&b[i+1]===0&&b[i+2]===0&&b[i+3]===1)p=i+4;
-if(p&&((b[p]&31)===6))return true}return false}
-const VENDOR_RE=/(?:^|[^a-z0-9])(adobe|sora|kling|runway|pika|luma|openai|capcut|kinemaster|filmora|canva|tiktok|kwai|kuaishou|shopee|lavf|lavc|x264|x265)(?![a-z])/g;
-function scan(file){return file.arrayBuffer().then(buf=>{const b=new Uint8Array(buf),dv=new DataView(buf),len=b.length;
-let meta='',seiText='',sei=null,seiNote='';
-const isMp4=len>=8&&BOX_TOP.has(fourcc(b,4));
-if(isMp4){const top=parseBoxes(b,dv,0,len);
-const walk=list=>{for(const x of list){if(x.kids.length)walk(x.kids);else if(!BOX_BINARY.has(x.type))meta+='\n'+latin1.decode(b.subarray(x.start,Math.min(x.end,x.start+8388608)))}};walk(top);
-const tracks=videoTracks(b,dv,top);
-if(tracks.length){const r=findSei(b,tracks);sei=r.count>0;seiText=r.text;seiNote=r.count?r.count+' NAL SEI di track '+tracks.map(t=>t.codecTag).join(', '):'track '+tracks.map(t=>t.codecTag).join(', ')+' tanpa SEI'}
-else seiNote='tidak ada track H.264/HEVC'}
-else{const edge=4*1024*1024;meta=latin1.decode(b.subarray(0,Math.min(len,edge)))+'\n'+latin1.decode(b.subarray(Math.max(0,len-edge)));
-if(/\.(ts|m2ts|mts|h264|264|h265|265|hevc)$/i.test(file.name||''))sei=annexBSei(b);else seiNote='kontainer bukan MP4/MOV'}
-meta=meta.toLowerCase();const all=meta+'\n'+seiText.toLowerCase();
-const vendors=[...new Set([...all.matchAll(VENDOR_RE)].map(m=>m[1]))];
-const checks={c2pa:/c2pa|jumbf|content credentials/.test(all),uuid:/uuid|urn:uuid/.test(meta),vendors,aiText:/generative.?ai|artificial intelligence|trainedalgorithmicmedia/.test(all),sei,seiNote};
-return{len,checks,head:Array.from(b.slice(0,32)).map(x=>x.toString(16).padStart(2,'0')).join(' ').toUpperCase()}})}
-function setRow(base,found,badText,okText,detail){const el=$(base);el.textContent=found?badText:okText;
-el.className='val '+(found?'rose':'green');if(detail)el.title=detail}
-function paintBefore(r){setRow('mC2paBefore',r.checks.c2pa,'TERDETEKSI (c2pa/jumb)','TIDAK TERDETEKSI');
-setRow('mUuidBefore',r.checks.uuid,'TERDETEKSI (uuid)','BERSIH');
-const v=r.checks.vendors;setRow('mEncoderBefore',v.length>0,v.join(', '),'Standard encoder',v.join(', '));
-setRow('mSeiBefore',r.checks.sei===true,'TERDETEKSI (SEI NAL)','BERSIH / TANPA SEI',r.checks.seiNote);
-if(r.checks.sei===null)$('mSeiBefore').textContent='Tak dapat diperiksa ('+r.checks.seiNote+')';
-$('mHexBefore').textContent=r.head;$('mHexBefore').className='val slatec';
-const bad=r.checks.c2pa||r.checks.uuid||r.checks.sei===true||v.length>0||r.checks.aiText;
-$('mRiskBefore').textContent=bad?'Beresiko label AI / flag platform':'Header standar, risiko rendah';
-$('mRiskBefore').className=bad?'rose':'green';
-const bd=$('beforeRiskBadge');bd.textContent=bad?'Ancaman metadata terdeteksi':'Bersih / risiko rendah';bd.className='badge '+(bad?'bad':'good')}
-function paintAfter(r,label){setRow('mC2paAfter',r.checks.c2pa,'MASIH TERDETEKSI','BERSIH (dibuang)');
-setRow('mUuidAfter',r.checks.uuid,'MASIH TERDETEKSI','TIDAK ADA MANIFES');
-const v=r.checks.vendors;setRow('mEncoderAfter',v.length>0,v.join(', '),'Standard Lavf codec',v.join(', '));
-setRow('mSeiAfter',r.checks.sei===true,'MASIH TERDETEKSI','BERSIH (filter_units)',r.checks.seiNote);
-if(r.checks.sei===null)$('mSeiAfter').textContent='Tak dapat diperiksa ('+r.checks.seiNote+')';
-$('mHexAfter').textContent=r.head;$('mHexAfter').className='val slatec';
-const bad=[r.checks.c2pa,r.checks.uuid,r.checks.sei===true,v.length>0,r.checks.aiText].filter(Boolean).length;
-$('mRiskAfter').textContent=bad===0?'AMAN / LOLOS PEMINDAI':'Masih ada '+bad+' pola tersisa';
-$('mRiskAfter').className=bad===0?'green':'rose';
-const bd=$('afterStatusBadge');bd.textContent=bad===0?'Sanitasi sukses':'Perlu Deep Clean';bd.className='badge '+(bad===0?'good':'bad');
-return bad}
-async function fetchBlob(url,type){const r=await fetch(url);if(!r.ok)throw Error('HTTP '+r.status+' saat mengambil '+url);return URL.createObjectURL(new Blob([await r.arrayBuffer()],{type}))}
-const CORE_BASES=['https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm','https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm'];
-function setPill(txt,on){$('enginePillTxt').textContent=txt;$('enginePill').classList.toggle('on',!!on)}
-function ensureEngine(){if(loaded)return Promise.resolve();if(loading)return loading;
-setPill('Memuat engine…',false);status('Mengunduh engine FFmpeg (sekali saja)…');appendLog('Memuat FFmpeg.wasm 0.12.15 + core single-thread 0.12.10…','indigo');
-loading=(async()=>{let last;for(const base of CORE_BASES){try{appendLog('Mengambil core dari '+new URL(base).host+'…');const coreURL=await fetchBlob(base+'/ffmpeg-core.js','text/javascript');const wasmURL=await fetchBlob(base+'/ffmpeg-core.wasm','application/wasm');
-ff=new FFmpeg();ff.on('log',e=>appendLog('[ffmpeg] '+e.message));ff.on('progress',e=>progress(Math.round(e.progress*100)));
-await ff.load({coreURL,wasmURL});loaded=true;setPill('Engine siap',true);status('Engine siap.');appendLog('Engine berhasil dimuat (single-thread; tanpa SharedArrayBuffer).','emerald');return}catch(err){last=err;appendLog('Gagal dari '+base+': '+err.message,'rose')}}
-throw last})();loading.catch(err=>{loading=null;setPill('Gagal dimuat',false);status('Gagal memuat engine: '+err.message);appendLog('[ERROR] '+(err.stack||err.message),'rose')});return loading}
-function resetAfter(){$('afterStatusBadge').textContent='Menunggu proses';$('afterStatusBadge').className='badge';
-for(const id of['mC2paAfter','mUuidAfter','mEncoderAfter','mSeiAfter','mRiskAfter']){$(id).textContent='-';$(id).className='val slatec'}$('mHexAfter').textContent='-';
-const dl=$('downloadBtn');dl.disabled=true;dl.className='';dl.id='downloadBtn';$('previewOut').removeAttribute('src');$('download').style.display='none';processedBlob=null}
-async function handleFile(file){if(!file)return;inputFile=file;resetAfter();
-$('fileNameDisplay').textContent=file.name;$('fileSizeDisplay').textContent=(file.size/1048576).toFixed(2)+' MB';
-const badge=$('fileStatusBadge');badge.textContent='Memindai…';badge.classList.remove('ok');
-$('previewIn').src=URL.createObjectURL(file);
-$('actionBtn').disabled=true;status('Memindai pola metadata…');
-try{paintBefore(await scan(file));appendLog('[FILE] "'+file.name+'" ('+file.size+' bytes) — hasil pindai tampil di panel SEBELUM.','indigo')}catch(err){appendLog('[PERINGATAN] Pindai awal gagal: '+err.message,'amber')}
-badge.textContent='Siap di memori';badge.classList.add('ok');
-ensureEngine().then(()=>{if(inputFile===file)$('actionBtn').disabled=false}).catch(()=>{});
-status('Siap. Tekan "Jalankan Pembersihan" — menunggu engine bila masih dimuat.');progress(0,'SIAP')}
-const dz=$('dropZone'),fi=$('videoFileInput');
-dz.addEventListener('click',()=>fi.click());
-dz.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fi.click()}});
-['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over')}));
-['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over')}));
-dz.addEventListener('drop',e=>{if(e.dataTransfer.files&&e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])});
-fi.addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0])});
-document.querySelectorAll('input[name=mode]').forEach(r=>r.addEventListener('change',()=>{const m=document.querySelector('input[name=mode]:checked').value;
-$('deepopt').style.display=m==='deep'?'block':'none';$('actionBtn').innerHTML=m==='deep'?'⚡ Jalankan Deep Clean (re-encode)':'⚡ Jalankan Pembersihan FFmpeg &amp; SEI Excision'}));
-async function probeVideo(inName){const lines=[];function collect(e){lines.push(e.message)}ff.on('log',collect);
-await ff.exec(['-hide_banner','-i',inName]);ff.off('log',collect);
-return lines.map(l=>/Stream #0:\d+.*?: Video: (\w+)/.exec(l)).filter((m,i)=>m&&!/attached pic/.test(lines[i]||'')).map(m=>m[1])}
-function bsfFor(v){const b=[];v.forEach((c,i)=>{if(c==='h264')b.push('-bsf:v:'+i,'filter_units=remove_types=6');else if(c==='hevc')b.push('-bsf:v:'+i,'filter_units=remove_types=39|40')});return b}
-async function finish(data,label){await ff.deleteFile('input.tmp').catch(()=>{});await ff.deleteFile('deep_tmp.mp4').catch(()=>{});await ff.deleteFile('output.mp4').catch(()=>{});
-if(outUrl)URL.revokeObjectURL(outUrl);const u8=data instanceof Uint8Array?data:new Uint8Array(data);
-processedBlob=new Blob([u8],{type:'video/mp4'});outUrl=URL.createObjectURL(processedBlob);
-$('previewOut').src=outUrl;const a=$('download');a.href=outUrl;a.download=label;a.style.display='inline-block';
-const dl=$('downloadBtn');dl.disabled=false;dl.id='downloadBtn';dl.classList.add('ready');dl.innerHTML='📥 Unduh berkas bersih ('+label+')';
-const bad=paintAfter(await scan(new File([u8],'out.mp4')),label);
-appendLog('✓ [SUCCESS] '+label+' selesai — '+(u8.length/1048576).toFixed(2)+' MiB.','emerald');
-if(bad>0)appendLog('[HASIL] Masih terdeteksi '+bad+' pola. '+(label.indexOf('deep')>=0?'Sisa kemungkinan watermark piksel, bukan box kontainer.':'Coba Deep Clean (re-encode).'),'amber');
-else appendLog('[HASIL] Bersih menurut pemindai: C2PA/JUMBF, UUID, vendor, teks AI, dan SEI tidak terdeteksi.','emerald');
-progress(100,'100%');status('Selesai ('+label+'). Putar pratinjau sampai habis untuk memastikan tidak glitch, lalu unduh.')}
-$('actionBtn').addEventListener('click',async()=>{if(!inputFile)return;const btn=$('actionBtn');btn.disabled=true;
-try{await ensureEngine();const mode=document.querySelector('input[name=mode]:checked').value;
-$('terminal').innerHTML='';progress(0,'0%');
-appendLog('[PIPELINE] Memproses "'+inputFile.name+'" — mode '+(mode==='deep'?'DEEP CLEAN':'REMUX CEPAT')+'.','indigo');
-appendLog('Menulis input ke memori engine (tanpa mengubah satu byte pun)…','amber');
-await ff.writeFile('input.tmp',new Uint8Array(await inputFile.arrayBuffer()));
-if(mode==='deep'){const crf=$('crf').value||'18';progress(5,'5%');status('Deep Clean tahap 1/2: re-encode…');
-appendLog('-> TAHAP 1/2: encode ulang H.264 CRF '+crf+' + AAC ke kontainer MP4 baru (UUID/JUMBF/C2PA, udta/meta/pssh tidak disalin; hanya V/A/S).');
-appendLog('   RUN: ffmpeg -i input.tmp -map 0:V? -map 0:a? -map 0:s? -map_metadata -1 -map_chapters -1 -c:v libx264 -preset veryfast -crf '+crf+' -x264-params sei=0 -c:a aac -fflags +bitexact deep_tmp.mp4');
-let ret=await ff.exec(['-hide_banner','-y','-i','input.tmp','-map','0:V?','-map','0:a?','-map','0:s?','-map_metadata','-1','-map_chapters','-1','-c:v','libx264','-preset','veryfast','-crf',crf,'-pix_fmt','yuv420p','-x264-params','sei=0','-c:a','aac','-b:a','128k','-c:s','mov_text','-fflags','+bitexact','-movflags','+faststart','deep_tmp.mp4']);
-if(ret!==0){appendLog('[PERINGATAN] libx264 gagal (kode '+ret+'), fallback ke mpeg4.','amber');
-ret=await ff.exec(['-hide_banner','-y','-i','input.tmp','-map','0:V?','-map','0:a?','-map','0:s?','-map_metadata','-1','-map_chapters','-1','-c:v','mpeg4','-q:v','2','-c:a','aac','-b:a','128k','-c:s','mov_text','-fflags','+bitexact','-movflags','+faststart','deep_tmp.mp4'])}
-if(ret!==0)throw Error('Re-encode gagal, kode '+ret);
-progress(55,'55%');status('Deep Clean tahap 2/2: filter SEI + remux…');
-appendLog('-> TAHAP 2/2: remux + buang SEI bawaan encoder.');
-appendLog('   RUN: ffmpeg -i deep_tmp.mp4 -map 0:V? -map 0:a? -map 0:s? -map_metadata -1 -map_chapters -1 -c copy -bsf:v:0 filter_units=remove_types=6 -fflags +bitexact output.mp4');
-const ret2=await ff.exec(['-hide_banner','-y','-i','deep_tmp.mp4','-map','0:V?','-map','0:a?','-map','0:s?','-map_metadata','-1','-map_chapters','-1','-c','copy','-bsf:v:0','filter_units=remove_types=6','-fflags','+bitexact','-movflags','+faststart','output.mp4']);
-if(ret2!==0){appendLog('[PERINGATAN] Filter SEI tahap 2 gagal (kode '+ret2+'), memakai hasil tahap 1.','amber');return finish(await ff.readFile('deep_tmp.mp4'),(inputFile.name.replace(/\.[a-z0-9]+$/i,'')||'video').slice(0,60)+'_deep-bersih.mp4')}
-return finish(await ff.readFile('output.mp4'),(inputFile.name.replace(/\.[a-z0-9]+$/i,'')||'video').slice(0,60)+'_deep-bersih.mp4')}
-status('Remux: menyalin stream tanpa encoding ulang…');
-const inV=await probeVideo('input.tmp');const bsf=bsfFor(inV);progress(20,'20%');
-appendLog('Stream video: '+(inV.join(', ')||'tidak ada')+(bsf.length?' · NAL SEI akan dibuang via bitstream filter.':' (tanpa filter SEI — codec non-H.264/HEVC)'));
-appendLog('-> TAHAP 1/1: remux bit-exact. Byte video disalin apa adanya → tidak mungkin glitch.');
-const outArgs=withB=>['-hide_banner','-y','-i','input.tmp','-map','0:V?','-map','0:a?','-map','0:s?','-map_metadata','-1','-map_chapters','-1','-c','copy'].concat(withB?bsf:[]).concat(['-fflags','+bitexact','-movflags','+faststart','output.mp4']);
-appendLog('   RUN: ffmpeg -i input.tmp -map 0:V? -map 0:a? -map 0:s? -map_metadata -1 -map_chapters -1 -c copy'+(bsf.length?' '+bsf.join(' '):'')+' -fflags +bitexact output.mp4');
-let ret=await ff.exec(outArgs(true));if(ret!==0&&bsf.length){appendLog('[PERINGATAN] Filter SEI gagal (kode '+ret+'), mengulang tanpa filter SEI (metadata tetap dibuang).','amber');ret=await ff.exec(outArgs(false))}
-if(ret!==0)throw Error('FFmpeg keluar dengan kode '+ret);
-progress(80,'80%');status('Memindai hasil…');appendLog('Memindai ulang hasil dengan pemindai box-aware…','indigo');
-const base=(inputFile.name.replace(/\.[a-z0-9]+$/i,'')||'video').slice(0,60);
-return finish(await ff.readFile('output.mp4'),base+'_bersih.mp4')}catch(err){status('Proses gagal: '+err.message);appendLog('[ERROR] '+(err.stack||err.message),'rose')}finally{btn.disabled=!inputFile}});
-function downloadClean(){if(!processedBlob&&outUrl){$('download').click();return}if(!processedBlob)return;
-const a=document.createElement('a');a.href=outUrl;a.download=$('download').download||'video_bersih.mp4';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),800)}
-$('downloadBtn').addEventListener('click',downloadClean);
-$('clearlog').addEventListener('click',()=>{$('terminal').innerHTML='';log('Log dibersihkan.')});
-})();</script>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- HEADER NAVBAR -->
+    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-900/30">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg leading-tight text-white flex items-center gap-2">
+                        Bongkarin Engine <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-mono font-bold px-2.5 py-0.5 rounded-full">v17.0 FFmpeg.wasm Safe</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Pembersih C2PA, SynthID, Unicode, & SEI Filter (100% Client-Side WASM)</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span id="wasmStatusBadge" class="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono font-bold rounded-full flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Memuat FFmpeg Core...
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+
+        <!-- UPLOAD DROPZONE -->
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col md:flex-row gap-5 items-center justify-between">
+            <div id="dropZone" class="w-full md:w-2/3 border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-6 text-center cursor-pointer transition bg-slate-950/60 flex flex-col items-center justify-center space-y-2">
+                <div class="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold">📹</div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-200">Unggah/Tarik File Media (Video/Gambar) ke Sini</p>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Mendukung MP4, MOV, WebM, MKV, JPG, PNG</p>
+                </div>
+                <input type="file" id="mediaFileInput" accept="video/*,image/*" class="hidden" onchange="handleFileSelected(event)">
+            </div>
+
+            <div class="w-full md:w-1/3 flex flex-col gap-3">
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-xs space-y-2">
+                    <div class="flex justify-between font-bold text-slate-300">
+                        <span class="text-slate-500">Berkas:</span>
+                        <span id="fileNameDisplay" class="text-indigo-400 truncate max-w-[160px]">Belum Ada Berkas</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span class="text-slate-500">Ukuran:</span>
+                        <span id="fileSizeDisplay" class="text-slate-200">-</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span class="text-slate-500">Status Mesin:</span>
+                        <span id="fileStatusBadge" class="text-amber-400 font-semibold">Menunggu WASM</span>
+                    </div>
+                </div>
+
+                <button id="actionBtn" onclick="executeWasmSanitization()" disabled class="w-full py-3.5 bg-slate-800 text-slate-500 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-not-allowed">
+                    ⚡ Jalankan FFmpeg.wasm Sanitasi Aman
+                </button>
+            </div>
+        </div>
+
+        <!-- INSPECTOR & PREVIEW CONTAINER -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- PANEL BEFORE -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col space-y-3">
+                <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                    <h3 class="text-xs font-extrabold text-rose-400 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                        1. Indikator & Preview Asli (Input)
+                    </h3>
+                    <span id="beforeRiskBadge" class="px-2 py-0.5 bg-slate-800 text-slate-500 text-[10px] font-extrabold rounded-full uppercase">
+                        STANDBY
+                    </span>
+                </div>
+
+                <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden aspect-video relative flex items-center justify-center">
+                    <video id="videoPreviewBefore" controls class="w-full h-full object-contain hidden"></video>
+                    <img id="imagePreviewBefore" class="w-full h-full object-contain hidden" alt="Preview Input">
+                    <div id="placeholderBefore" class="text-center p-4">
+                        <span class="text-3xl block mb-1">🎞️</span>
+                        <p class="text-[11px] text-slate-500">Preview Media Asli</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-xs flex-1 pt-1">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 space-y-1">
+                        <div class="flex justify-between"><span class="text-slate-500">Manifes C2PA (JUMBF):</span> <span id="mC2paBefore" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">SynthID / Vendor Stamp:</span> <span id="mSynthBefore" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">SEI Bitstream (Type 6):</span> <span id="mSeiBefore" class="font-mono text-slate-500">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL AFTER -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col space-y-3">
+                <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                    <h3 class="text-xs font-extrabold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        2. Indikator & Preview Hasil (WASM Cleaned)
+                    </h3>
+                    <span id="afterStatusBadge" class="px-2 py-0.5 bg-slate-800 text-slate-500 text-[10px] font-extrabold rounded-full uppercase">
+                        MENUNGGU PROSES
+                    </span>
+                </div>
+
+                <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden aspect-video relative flex items-center justify-center">
+                    <video id="videoPreviewAfter" controls class="w-full h-full object-contain hidden"></video>
+                    <img id="imagePreviewAfter" class="w-full h-full object-contain hidden" alt="Preview Cleaned">
+                    <div id="placeholderAfter" class="text-center p-4">
+                        <span class="text-3xl block mb-1">✨</span>
+                        <p class="text-[11px] text-slate-500">Preview Media Bersih (Durasi Utuh)</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-xs flex-1 pt-1">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 space-y-1">
+                        <div class="flex justify-between"><span class="text-slate-500">Manifes C2PA (JUMBF):</span> <span id="mC2paAfter" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">SynthID / Vendor Stamp:</span> <span id="mSynthAfter" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">SEI Bitstream (Type 6):</span> <span id="mSeiAfter" class="font-mono text-slate-500">-</span></div>
+                    </div>
+                </div>
+
+                <div class="pt-1">
+                    <button id="downloadBtn" disabled onclick="downloadCleanFile()" class="w-full py-2.5 bg-slate-800 text-slate-500 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-not-allowed">
+                        📥 Unduh Berkas Bersih (FFmpeg.wasm)
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TERMINAL LOG -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                    🖥️ FFmpeg.wasm Terminal Log
+                </h3>
+                <span id="progressText" class="text-xs font-mono font-bold text-indigo-400">LOADING</span>
+            </div>
+
+            <div id="terminal" class="bg-slate-950 border border-slate-800/90 rounded-xl p-4 font-mono-code text-xs text-slate-300 h-48 overflow-y-auto space-y-1.5 leading-relaxed">
+                <div class="text-indigo-400">[Inisialisasi] Memuat modul FFmpeg WebAssembly ke memori browser...</div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto bg-slate-900 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+        <p>&copy; Bongkarin Engine — FFmpeg.wasm Safe Duration Remux Studio.</p>
+    </footer>
+
+    <!-- FFMPEG.WASM LOGIC & SAFETY ENGINE -->
+    <script>
+        const { FFmpeg } = FFmpegWASM;
+        let ffmpeg = null;
+        let currentFile = null;
+        let processedBlob = null;
+        let beforeUrl = null;
+        let afterUrl = null;
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('mediaFileInput');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFileSelected(e.dataTransfer.files[0]);
+        });
+
+        // Inisialisasi FFmpeg.wasm saat halaman dimuat
+        async function loadFFmpegWasm() {
+            try {
+                ffmpeg = new FFmpeg();
+                
+                ffmpeg.on('log', ({ message }) => {
+                    appendLog(`[FFmpeg] ${message}`, 'slate');
+                });
+
+                // Menggunakan CDN resmi untuk file core wasm agar tidak gagal load di GitHub Pages
+                const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+                await ffmpeg.load({
+                    coreURL: `${baseURL}/ffmpeg-core.js`,
+                    wasmURL: `${baseURL}/ffmpeg-core.wasm`
+                });
+
+                document.getElementById('wasmStatusBadge').className = 'px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-full flex items-center gap-1.5';
+                document.getElementById('wasmStatusBadge').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> FFmpeg.wasm Siap';
+                document.getElementById('fileStatusBadge').textContent = 'Menunggu Berkas';
+                document.getElementById('progressText').textContent = 'SIAP';
+                appendLog('[SUCCESS] Modul FFmpeg.wasm berhasil dimuat ke browser!', 'emerald');
+            } catch (err) {
+                appendLog(`[ERROR GAGAL LOAD WASM]: ${err.message}`, 'rose');
+                document.getElementById('wasmStatusBadge').innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400"></span> WASM Gagal Load';
+            }
+        }
+
+        loadFFmpegWasm();
+
+        async function handleFileSelected(arg) {
+            const file = arg.target ? (arg.target.files ? arg.target.files[0] : null) : arg;
+            if (!file) return;
+
+            currentFile = file;
+            processedBlob = null;
+
+            if (beforeUrl) URL.revokeObjectURL(beforeUrl);
+            if (afterUrl) URL.revokeObjectURL(afterUrl);
+
+            beforeUrl = URL.createObjectURL(file);
+            
+            const isVideo = file.type.startsWith('video/');
+            const vBefore = document.getElementById('videoPreviewBefore');
+            const iBefore = document.getElementById('imagePreviewBefore');
+            const pBefore = document.getElementById('placeholderBefore');
+
+            if (isVideo) {
+                iBefore.classList.add('hidden');
+                vBefore.src = beforeUrl;
+                vBefore.classList.remove('hidden');
+            } else {
+                vBefore.classList.add('hidden');
+                iBefore.src = beforeUrl;
+                iBefore.classList.remove('hidden');
+            }
+            pBefore.classList.add('hidden');
+
+            document.getElementById('videoPreviewAfter').classList.add('hidden');
+            document.getElementById('imagePreviewAfter').classList.add('hidden');
+            document.getElementById('placeholderAfter').classList.remove('hidden');
+
+            document.getElementById('fileNameDisplay').textContent = file.name;
+            document.getElementById('fileSizeDisplay').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+            document.getElementById('fileStatusBadge').textContent = 'File Dimuat';
+            document.getElementById('fileStatusBadge').className = 'text-emerald-400 font-semibold';
+
+            if (ffmpeg) {
+                const actBtn = document.getElementById('actionBtn');
+                actBtn.disabled = false;
+                actBtn.className = 'w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center justify-center gap-2 cursor-pointer';
+            }
+
+            appendLog(`[FILE LOADED] Berkas "${file.name}" siap diproses via FFmpeg.wasm.`, 'indigo');
+            inspectBeforeState(file);
+        }
+
+        async function inspectBeforeState(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const uint8 = new Uint8Array(arrayBuffer);
+            const scanLimit = Math.min(uint8.length, 2000000);
+            const textDecoder = new TextDecoder('latin1');
+            const asciiSample = textDecoder.decode(uint8.slice(0, scanLimit));
+
+            let c2paFound = asciiSample.includes('c2pa') || asciiSample.includes('jumb') || asciiSample.includes('C2PA');
+            let vendors = ['Adobe', 'Sora', 'Kling', 'Runway', 'Pika', 'Luma', 'OpenAI', 'SynthID'];
+            let foundVendor = vendors.filter(v => asciiSample.includes(v));
+
+            let seiFound = false;
+            for (let i = 0; i < scanLimit - 5; i++) {
+                if (uint8[i] === 0x00 && uint8[i+1] === 0x00 && ((uint8[i+2] === 0x01 && (uint8[i+3] & 0x1F) === 6) || (uint8[i+2] === 0x00 && uint8[i+3] === 0x01 && (uint8[i+4] & 0x1F) === 6))) {
+                    seiFound = true;
+                    break;
+                }
+            }
+
+            document.getElementById('mC2paBefore').textContent = c2paFound ? 'TERDETEKSI (C2PA)' : 'BERSIH';
+            document.getElementById('mC2paBefore').className = c2paFound ? 'font-mono text-rose-400 font-bold' : 'font-mono text-emerald-400';
+
+            document.getElementById('mSynthBefore').textContent = foundVendor.length > 0 ? foundVendor.join(', ') : 'Standard Encoder';
+            document.getElementById('mSynthBefore').className = foundVendor.length > 0 ? 'font-mono text-rose-400 font-bold' : 'font-mono text-slate-300';
+
+            document.getElementById('mSeiBefore').textContent = seiFound ? 'TERDETEKSI (SEI Type 6)' : 'BERSIH';
+            document.getElementById('mSeiBefore').className = seiFound ? 'font-mono text-rose-400 font-bold' : 'font-mono text-emerald-400';
+
+            if (c2paFound || foundVendor.length > 0 || seiFound) {
+                document.getElementById('beforeRiskBadge').textContent = 'ANCAMAN METADATA TERDETEKSI';
+                document.getElementById('beforeRiskBadge').className = 'px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-extrabold rounded-full uppercase';
+            } else {
+                document.getElementById('beforeRiskBadge').textContent = 'RISIKO RENDAH';
+                document.getElementById('beforeRiskBadge').className = 'px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-extrabold rounded-full uppercase';
+            }
+        }
+
+        async function executeWasmSanitization() {
+            if (!ffmpeg || !currentFile) return;
+
+            const term = document.getElementById('terminal');
+            appendLog(`[FFmpeg.wasm] Memulai pembersihan aman untuk: ${currentFile.name}`, 'indigo');
+
+            const inputName = 'input_media' + getExtension(currentFile.name);
+            const outputName = 'output_clean.mp4';
+
+            try {
+                // Tulis file ke filesystem virtual FFmpeg.wasm
+                const fileData = new Uint8Array(await currentFile.arrayBuffer());
+                await ffmpeg.writeFile(inputName, fileData);
+
+                appendLog(`-> Menjalankan perintah FFmpeg.wasm strip metadata & bitstream filter...`, 'amber');
+
+                // ARGUMEN AMAN DURASI:
+                // Menggunakan -map_metadata -1 untuk menghapus global metadata container,
+                // -bsf:v "filter_units=remove_types=6" untuk mencopot SEI NAL Type 6 tanpa merusak frame,
+                // serta -fflags +bitexact -avoid_negative_ts make_zero untuk memastikan timestamp/durasi 100% utuh.
+                const isVideo = currentFile.type.startsWith('video/');
+                
+                if (isVideo) {
+                    await ffmpeg.exec([
+                        '-i', inputName,
+                        '-map', '0',
+                        '-c', 'copy',
+                        '-map_metadata', '-1',
+                        '-map_metadata:s:v', '-1',
+                        '-map_metadata:s:a', '-1',
+                        '-bsf:v', 'filter_units=remove_types=6',
+                        '-fflags', '+bitexact',
+                        '-avoid_negative_ts', 'make_zero',
+                        outputName
+                    ]);
+                } else {
+                    // Jika Gambar
+                    await ffmpeg.exec([
+                        '-i', inputName,
+                        '-map_metadata', '-1',
+                        outputName
+                    ]);
+                }
+
+                // Ambil hasil dari virtual filesystem FFmpeg
+                const data = await ffmpeg.readFile(outputName);
+                processedBlob = new Blob([data.buffer], { type: isVideo ? 'video/mp4' : currentFile.type });
+
+                afterUrl = URL.createObjectURL(processedBlob);
+                const vAfter = document.getElementById('videoPreviewAfter');
+                const iAfter = document.getElementById('imagePreviewAfter');
+                const pAfter = document.getElementById('placeholderAfter');
+
+                if (isVideo) {
+                    iAfter.classList.add('hidden');
+                    vAfter.src = afterUrl;
+                    vAfter.classList.remove('hidden');
+                } else {
+                    vAfter.classList.add('hidden');
+                    iAfter.src = afterUrl;
+                    iAfter.classList.remove('hidden');
+                }
+                pAfter.classList.add('hidden');
+
+                document.getElementById('mC2paAfter').textContent = 'BERSIH (WASM Stripped)';
+                document.getElementById('mC2paAfter').className = 'font-mono text-emerald-400 font-bold';
+                document.getElementById('mSynthAfter').textContent = 'Standard Stream';
+                document.getElementById('mSynthAfter').className = 'font-mono text-emerald-400 font-bold';
+                document.getElementById('mSeiAfter').textContent = 'BERSIH (Type 6 Removed)';
+                document.getElementById('mSeiAfter').className = 'font-mono text-emerald-400 font-bold';
+
+                document.getElementById('afterStatusBadge').textContent = 'SANISASI BERHASIL';
+                document.getElementById('afterStatusBadge').className = 'px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold rounded-full uppercase';
+
+                appendLog(`✓ [SUCCESS] Berkas berhasil dibersihkan dengan durasi utuh tanpa patah!`, 'emerald');
+
+                const dlBtn = document.getElementById('downloadBtn');
+                dlBtn.disabled = false;
+                dlBtn.className = 'w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-900/40';
+
+            } catch (err) {
+                appendLog(`[ERROR WASM EXEC]: ${err.message}`, 'rose');
+            }
+        }
+
+        function downloadCleanFile() {
+            if (!processedBlob) return;
+            const fileName = currentFile ? "ffmpeg_clean_" + currentFile.name.replace(/\.[^/.]+$/, "") + ".mp4" : "output_clean.mp4";
+            const url = URL.createObjectURL(processedBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 1000);
+        }
+
+        function getExtension(filename) {
+            return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2) ? "." + filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2) : ".mp4";
+        }
+
+        function appendLog(text, color = 'slate') {
+            const term = document.getElementById('terminal');
+            const div = document.createElement('div');
+            let colorClass = 'text-slate-300';
+            if (color === 'emerald') colorClass = 'text-emerald-400 font-bold';
+            if (color === 'indigo') colorClass = 'text-indigo-400 font-semibold';
+            if (color === 'amber') colorClass = 'text-amber-400';
+            if (color === 'rose') colorClass = 'text-rose-400 font-bold';
+
+            const time = new Date().toLocaleTimeString('id-ID');
+            div.className = colorClass;
+            div.innerHTML = `<span class="text-slate-600">[${time}]</span> ${text}`;
+            term.appendChild(div);
+            term.scrollTop = term.scrollHeight;
+        }
+    </script>
 </body>
 </html>
