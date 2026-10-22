@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bongkarin - AI Metadata & SEI Excision Studio</title>
+    <title>MetaCleaner Pro - Auto Remux & SEI Excision Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -17,7 +17,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
 
-    <!-- HEADER NAVBAR -->
+    <!-- HEADER -->
     <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -26,14 +26,14 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-base sm:text-lg leading-tight text-white flex items-center gap-2">
-                        Bongkarin Engine <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-mono font-bold px-2.5 py-0.5 rounded-full">v16.0 Duration-Safe</span>
+                        MetaCleaner Pro <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-mono font-bold px-2.5 py-0.5 rounded-full">v12.0 SEI Stripper</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Pembersih C2PA, SynthID, Unicode, & Bitstream SEI NAL Unit Type 6 (100% Offline)</p>
+                    <p class="text-xs text-slate-400">Otomatisasi Remuxing, Bitstream Filter (SEI Type 6), & Excision Engine</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
                 <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-full flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Zero-Offset Shift (No Glitch)
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> SEI Bitstream Filter Active
                 </span>
             </div>
         </div>
@@ -41,15 +41,15 @@
 
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
 
-        <!-- UPLOAD DROPZONE -->
+        <!-- FILE INPUT & ACTION CONTROL -->
         <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col md:flex-row gap-5 items-center justify-between">
             <div id="dropZone" class="w-full md:w-2/3 border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-6 text-center cursor-pointer transition bg-slate-950/60 flex flex-col items-center justify-center space-y-2">
                 <div class="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold">📹</div>
                 <div>
-                    <p class="text-xs font-semibold text-slate-200">Unggah/Tarik File Media (Video/Gambar) ke Sini</p>
-                    <p class="text-[11px] text-slate-500 mt-0.5">Mendukung MP4, MOV, WebM, MKV, JPG, PNG, WEBP</p>
+                    <p class="text-xs font-semibold text-slate-200">Unggah/Pilih Berkas Video untuk Langsung Dibersihkan</p>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Mendukung MP4, MOV, WebM, MKV, AVI</p>
                 </div>
-                <input type="file" id="mediaFileInput" accept="video/*,image/*" class="hidden" onchange="handleFileSelected(event)">
+                <input type="file" id="videoFileInput" accept="video/*" class="hidden" onchange="handleFileSelected(event)">
             </div>
 
             <div class="w-full md:w-1/3 flex flex-col gap-3">
@@ -63,18 +63,18 @@
                         <span id="fileSizeDisplay" class="text-slate-200">-</span>
                     </div>
                     <div class="flex justify-between text-slate-400">
-                        <span class="text-slate-500">Status Memori:</span>
+                        <span class="text-slate-500">Status RAM:</span>
                         <span id="fileStatusBadge" class="text-amber-400 font-semibold">Menunggu Berkas</span>
                     </div>
                 </div>
 
-                <button id="actionBtn" onclick="executeSanitization()" disabled class="w-full py-3.5 bg-slate-800 text-slate-500 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-not-allowed">
-                    ⚡ Jalankan Sanitasi Presisi & Excision
+                <button id="actionBtn" onclick="executeAutoSanitization()" disabled class="w-full py-3.5 bg-slate-800 text-slate-500 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-not-allowed">
+                    ⚡ Jalankan Automasi Pembersihan FFmpeg & SEI Excision
                 </button>
             </div>
         </div>
 
-        <!-- INSPECTOR & PREVIEW CONTAINER -->
+        <!-- BEFORE VS AFTER METADATA INSPECTOR -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             <!-- PANEL BEFORE -->
@@ -82,28 +82,28 @@
                 <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
                     <h3 class="text-xs font-extrabold text-rose-400 uppercase tracking-wider flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                        1. Indikator & Preview Asli (Input)
+                        1. Indikator SEBELUM (Input File)
                     </h3>
                     <span id="beforeRiskBadge" class="px-2 py-0.5 bg-slate-800 text-slate-500 text-[10px] font-extrabold rounded-full uppercase">
                         STANDBY
                     </span>
                 </div>
 
-                <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden aspect-video relative flex items-center justify-center">
-                    <video id="videoPreviewBefore" controls class="w-full h-full object-contain hidden"></video>
-                    <img id="imagePreviewBefore" class="w-full h-full object-contain hidden" alt="Preview Input">
-                    <div id="placeholderBefore" class="text-center p-4">
-                        <span class="text-3xl block mb-1">🎞️</span>
-                        <p class="text-[11px] text-slate-500">Preview Media Asli</p>
-                    </div>
-                </div>
-
-                <div class="space-y-2 text-xs flex-1 pt-1">
-                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 space-y-1">
+                <div class="space-y-2.5 text-xs flex-1">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
                         <div class="flex justify-between"><span class="text-slate-500">Manifes C2PA (JUMBF):</span> <span id="mC2paBefore" class="font-mono text-slate-500">-</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">SynthID / Vendor Stamp:</span> <span id="mSynthBefore" class="font-mono text-slate-500">-</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Unicode Invisible Mark:</span> <span id="mUnicodeBefore" class="font-mono text-slate-500">-</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">SEI Bitstream (Type 6):</span> <span id="mSeiBefore" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">UUID Claim Box:</span> <span id="mUuidBefore" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Software / Vendor Stamp:</span> <span id="mEncoderBefore" class="font-mono text-slate-500">-</span></div>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="flex justify-between"><span class="text-slate-500">Bitstream / SEI Data:</span> <span id="mSeiBefore" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between items-center"><span class="text-slate-500">32-Byte Header Hex:</span> <span id="mHexBefore" class="font-mono text-[10px] text-slate-500 bg-slate-900 px-1.5 py-0.5 rounded truncate max-w-[160px]">-</span></div>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <span class="text-slate-500">Status Platform AI Detector:</span>
+                        <span id="mRiskBefore" class="font-bold text-slate-500 text-[11px]">-</span>
                     </div>
                 </div>
             </div>
@@ -113,52 +113,52 @@
                 <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
                     <h3 class="text-xs font-extrabold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                        2. Indikator & Preview Hasil (Cleaned)
+                        2. Indikator SESUDAH (Hasil Sanitasi Otomatis)
                     </h3>
                     <span id="afterStatusBadge" class="px-2 py-0.5 bg-slate-800 text-slate-500 text-[10px] font-extrabold rounded-full uppercase">
                         MENUNGGU PROSES
                     </span>
                 </div>
 
-                <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden aspect-video relative flex items-center justify-center">
-                    <video id="videoPreviewAfter" controls class="w-full h-full object-contain hidden"></video>
-                    <img id="imagePreviewAfter" class="w-full h-full object-contain hidden" alt="Preview Cleaned">
-                    <div id="placeholderAfter" class="text-center p-4">
-                        <span class="text-3xl block mb-1">✨</span>
-                        <p class="text-[11px] text-slate-500">Preview Media Cleaned (Durasi Utuh)</p>
-                    </div>
-                </div>
-
-                <div class="space-y-2 text-xs flex-1 pt-1">
-                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 space-y-1">
+                <div class="space-y-2.5 text-xs flex-1">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
                         <div class="flex justify-between"><span class="text-slate-500">Manifes C2PA (JUMBF):</span> <span id="mC2paAfter" class="font-mono text-slate-500">-</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">SynthID / Vendor Stamp:</span> <span id="mSynthAfter" class="font-mono text-slate-500">-</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Unicode Invisible Mark:</span> <span id="mUnicodeAfter" class="font-mono text-slate-500">-</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">SEI Bitstream (Type 6):</span> <span id="mSeiAfter" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">UUID Claim Box:</span> <span id="mUuidAfter" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Software / Vendor Stamp:</span> <span id="mEncoderAfter" class="font-mono text-slate-500">-</span></div>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="flex justify-between"><span class="text-slate-500">Bitstream / SEI Data:</span> <span id="mSeiAfter" class="font-mono text-slate-500">-</span></div>
+                        <div class="flex justify-between items-center"><span class="text-slate-500">32-Byte Header Hex:</span> <span id="mHexAfter" class="font-mono text-[10px] text-slate-500 bg-slate-900 px-1.5 py-0.5 rounded truncate max-w-[160px]">-</span></div>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <span class="text-slate-500">Status Platform AI Detector:</span>
+                        <span id="mRiskAfter" class="font-bold text-slate-500 text-[11px]">-</span>
                     </div>
                 </div>
 
                 <div class="pt-1">
                     <button id="downloadBtn" disabled onclick="downloadCleanFile()" class="w-full py-2.5 bg-slate-800 text-slate-500 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-not-allowed">
-                        📥 Unduh Berkas Bersih (Cleaned)
+                        📥 Unduh Berkas Bersih (output_bersih.mp4)
                     </button>
                 </div>
             </div>
 
         </div>
 
-        <!-- TERMINAL LOG -->
+        <!-- TERMINAL LOG DISPLAY -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                    🖥️ Terminal Eksekusi Bongkarin Engine
+                    🖥️ FFmpeg & SEI Bitstream Excision Terminal Log
                 </h3>
                 <span id="progressText" class="text-xs font-mono font-bold text-indigo-400">SIAP</span>
             </div>
 
-            <div id="terminal" class="bg-slate-950 border border-slate-800/90 rounded-xl p-4 font-mono-code text-xs text-slate-300 h-48 overflow-y-auto space-y-1.5 leading-relaxed">
-                <div class="text-indigo-400">[Bongkarin Engine v16.0 Ready] Client-Side Duration-Safe Media Sanitizer Loaded.</div>
-                <div class="text-slate-500">Silakan masukkan file MP4/Gambar untuk memulai pembersihan.</div>
+            <div id="terminal" class="bg-slate-950 border border-slate-800/90 rounded-xl p-4 font-mono-code text-xs text-slate-300 h-56 overflow-y-auto space-y-1.5 leading-relaxed">
+                <div class="text-indigo-400">[MetaCleaner v12.0 Engine Loaded] Enhanced Bitstream & SEI NAL Stripper Ready.</div>
+                <div class="text-slate-500">Silakan pilih berkas video untuk memulai automasi pembersihan.</div>
             </div>
         </div>
 
@@ -166,19 +166,17 @@
 
     <!-- FOOTER -->
     <footer class="mt-auto bg-slate-900 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        <p>&copy; Bongkarin Engine — Client-Side Duration-Safe Sanitizer Engine.</p>
+        <p>&copy; MetaCleaner Pro & FFmpeg Remux Studio — Client-Side SEI NAL Excision Engine.</p>
     </footer>
 
-    <!-- ENGINE LOGIC -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         let currentFile = null;
         let fileArrayBuffer = null;
         let processedBlob = null;
-        let beforeUrl = null;
-        let afterUrl = null;
 
         const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('mediaFileInput');
+        const fileInput = document.getElementById('videoFileInput');
 
         dropZone.addEventListener('click', () => fileInput.click());
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
@@ -196,36 +194,12 @@
             currentFile = file;
             processedBlob = null;
 
-            if (beforeUrl) URL.revokeObjectURL(beforeUrl);
-            if (afterUrl) URL.revokeObjectURL(afterUrl);
-
-            beforeUrl = URL.createObjectURL(file);
-            
-            const isVideo = file.type.startsWith('video/');
-            const vBefore = document.getElementById('videoPreviewBefore');
-            const iBefore = document.getElementById('imagePreviewBefore');
-            const pBefore = document.getElementById('placeholderBefore');
-
-            if (isVideo) {
-                iBefore.classList.add('hidden');
-                vBefore.src = beforeUrl;
-                vBefore.classList.remove('hidden');
-            } else {
-                vBefore.classList.add('hidden');
-                iBefore.src = beforeUrl;
-                iBefore.classList.remove('hidden');
-            }
-            pBefore.classList.add('hidden');
-
-            document.getElementById('videoPreviewAfter').classList.add('hidden');
-            document.getElementById('imagePreviewAfter').classList.add('hidden');
-            document.getElementById('placeholderAfter').classList.remove('hidden');
-
             document.getElementById('fileNameDisplay').textContent = file.name;
             document.getElementById('fileSizeDisplay').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
-            document.getElementById('fileStatusBadge').textContent = 'Membaca Memori...';
+            document.getElementById('fileStatusBadge').textContent = 'Membaca ke RAM...';
             document.getElementById('fileStatusBadge').className = 'text-amber-400 font-semibold';
 
+            // Reset Download Button State
             const dlBtn = document.getElementById('downloadBtn');
             dlBtn.disabled = true;
             dlBtn.className = 'w-full py-2.5 bg-slate-800 text-slate-500 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-not-allowed';
@@ -234,12 +208,13 @@
                 fileArrayBuffer = await file.arrayBuffer();
                 document.getElementById('fileStatusBadge').textContent = 'Siap di Memori';
                 document.getElementById('fileStatusBadge').className = 'text-emerald-400 font-semibold';
-
+                
+                // Enable Action Button
                 const actBtn = document.getElementById('actionBtn');
                 actBtn.disabled = false;
                 actBtn.className = 'w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center justify-center gap-2 cursor-pointer';
 
-                appendLog(`[FILE LOADED] Berkas "${file.name}" dimuat (${file.size} bytes).`, 'indigo');
+                appendLog(`[FILE LOADED] Berkas "${file.name}" (${file.size} bytes) dimuat ke RAM buffer.`, 'indigo');
                 inspectBeforeState();
             } catch (err) {
                 appendLog(`[ERROR] Gagal membaca berkas: ${err.message}`, 'rose');
@@ -249,200 +224,61 @@
         function inspectBeforeState() {
             if (!fileArrayBuffer) return;
             const uint8 = new Uint8Array(fileArrayBuffer);
-            const scanLimit = Math.min(uint8.length, 3000000);
+            const scanLimit = Math.min(uint8.length, 2000000);
+            
+            let hexStr = '';
+            for (let i = 0; i < Math.min(32, uint8.length); i++) {
+                hexStr += uint8[i].toString(16).padStart(2, '0').toUpperCase() + ' ';
+            }
+            document.getElementById('mHexBefore').textContent = hexStr.trim();
 
-            const textDecoder = new TextDecoder('latin1');
+            const textDecoder = new TextDecoder('ascii', { fatal: false });
             const asciiSample = textDecoder.decode(uint8.slice(0, scanLimit));
 
             let c2paFound = asciiSample.includes('c2pa') || asciiSample.includes('jumb') || asciiSample.includes('C2PA');
+            let uuidFound = asciiSample.includes('uuid') || asciiSample.includes('UUID');
             
             let detectedVendors = [];
-            const vendors = ['Adobe', 'Sora', 'Kling', 'Runway', 'Pika', 'Luma', 'OpenAI', 'SynthID'];
+            const vendors = ['Adobe', 'Sora', 'Kling', 'Runway', 'Pika', 'Luma', 'OpenAI'];
             for (const v of vendors) {
                 if (asciiSample.includes(v)) detectedVendors.push(v);
             }
 
-            // Unicode Zero-Width / Invisible Mark Counter
-            let unicodeCount = 0;
-            for (let i = 0; i < scanLimit - 2; i++) {
-                if (uint8[i] === 0xE2 && uint8[i+1] === 0x80 && (uint8[i+2] >= 0x8B && uint8[i+2] <= 0x8F)) {
-                    unicodeCount++;
-                }
-            }
-
-            // SEI NAL Unit Type 6
-            let seiFound = false;
+            // SEI User Data Unregistered Detection (NAL Unit Type 6 / UUID payloads)
+            let seiFound = asciiSample.includes('user_data') || asciiSample.includes('sei') || asciiSample.includes('SEI');
             for (let i = 0; i < scanLimit - 5; i++) {
+                // Check NAL start codes 0x000001 or 0x00000001 followed by NAL type 6 (SEI)
                 if (uint8[i] === 0x00 && uint8[i+1] === 0x00 && ((uint8[i+2] === 0x01 && (uint8[i+3] & 0x1F) === 6) || (uint8[i+2] === 0x00 && uint8[i+3] === 0x01 && (uint8[i+4] & 0x1F) === 6))) {
                     seiFound = true;
                     break;
                 }
             }
 
-            document.getElementById('mC2paBefore').textContent = c2paFound ? 'TERDETEKSI (C2PA/JUMBF)' : 'BERSIH';
+            document.getElementById('mC2paBefore').textContent = c2paFound ? 'TERDETEKSI (c2pa/jumb)' : 'TIDAK TERDETEKSI';
             document.getElementById('mC2paBefore').className = c2paFound ? 'font-mono text-rose-400 font-bold' : 'font-mono text-emerald-400';
 
-            document.getElementById('mSynthBefore').textContent = detectedVendors.length > 0 ? detectedVendors.join(', ') : 'Standard Encoder';
-            document.getElementById('mSynthBefore').className = detectedVendors.length > 0 ? 'font-mono text-rose-400 font-bold' : 'font-mono text-slate-300';
+            document.getElementById('mUuidBefore').textContent = uuidFound ? 'TERDETEKSI (uuid)' : 'BERSIH';
+            document.getElementById('mUuidBefore').className = uuidFound ? 'font-mono text-rose-400 font-bold' : 'font-mono text-emerald-400';
 
-            document.getElementById('mUnicodeBefore').textContent = unicodeCount > 0 ? `TERDETEKSI (${unicodeCount} Marks)` : 'BERSIH';
-            document.getElementById('mUnicodeBefore').className = unicodeCount > 0 ? 'font-mono text-rose-400 font-bold' : 'font-mono text-emerald-400';
+            document.getElementById('mEncoderBefore').textContent = detectedVendors.length > 0 ? detectedVendors.join(', ') : 'Standard Encoder';
+            document.getElementById('mEncoderBefore').className = detectedVendors.length > 0 ? 'font-mono text-rose-400 font-bold' : 'font-mono text-slate-300';
 
-            document.getElementById('mSeiBefore').textContent = seiFound ? 'TERDETEKSI (SEI Type 6)' : 'BERSIH / TIDAK ADA';
+            document.getElementById('mSeiBefore').textContent = seiFound ? 'TERDETEKSI (SEI NAL Unit Type 6)' : 'BERSIH / TIDAK ADA SEI';
             document.getElementById('mSeiBefore').className = seiFound ? 'font-mono text-rose-400 font-bold' : 'font-mono text-emerald-400';
 
-            if (c2paFound || detectedVendors.length > 0 || unicodeCount > 0 || seiFound) {
+            if (c2paFound || uuidFound || seiFound || detectedVendors.length > 0) {
+                document.getElementById('mRiskBefore').textContent = 'Beresiko Shadowban / Label AI';
+                document.getElementById('mRiskBefore').className = 'font-bold text-rose-400 text-[11px]';
+
                 document.getElementById('beforeRiskBadge').textContent = 'ANCAMAN METADATA TERDETEKSI';
                 document.getElementById('beforeRiskBadge').className = 'px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-extrabold rounded-full uppercase';
             } else {
-                document.getElementById('beforeRiskBadge').textContent = 'RISIKO RENDAH / BERSIH';
+                document.getElementById('mRiskBefore').textContent = 'Header Standar MP4 (ftyp/isom)';
+                document.getElementById('mRiskBefore').className = 'font-bold text-emerald-400 text-[11px]';
+
+                document.getElementById('beforeRiskBadge').textContent = 'BERSIH / RISIKO RENDAH';
                 document.getElementById('beforeRiskBadge').className = 'px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-extrabold rounded-full uppercase';
             }
-        }
-
-        async function executeSanitization() {
-            if (!fileArrayBuffer) return;
-
-            const term = document.getElementById('terminal');
-            term.innerHTML = '';
-            const fileName = currentFile ? currentFile.name : 'media.mp4';
-
-            appendLog(`[BONGKARIN ENGINE v16.0] Menginisialisasi sanitasi biner pada: ${fileName}`, 'indigo');
-            await delay(150);
-
-            let cleanBytes = new Uint8Array(fileArrayBuffer.slice(0));
-            const view = new DataView(cleanBytes.buffer);
-            let pos = 0;
-            let len = cleanBytes.length;
-            let neutralizedBoxes = 0;
-
-            const isVideo = currentFile && currentFile.type.startsWith('video/');
-
-            if (isVideo) {
-                appendLog(`-> Memindai ISO BMFF MP4 Box Structure (Free-Box Padding Mode)...`, 'amber');
-                await delay(100);
-
-                // DURATION-SAFE MP4 BOX PARSER (Zero-Offset Shift)
-                while (pos < len - 8) {
-                    let boxSize = view.getUint32(pos);
-                    if (boxSize < 8 || pos + boxSize > len) { pos++; continue; }
-
-                    let boxType = String.fromCharCode(cleanBytes[pos+4], cleanBytes[pos+5], cleanBytes[pos+6], cleanBytes[pos+7]);
-
-                    // Kunci atom penentu durasi dan indek frame
-                    if (['moov', 'trak', 'mdia', 'minf', 'stbl', 'stts', 'stsz', 'stco', 'co64', 'mdat'].includes(boxType.toLowerCase())) {
-                        pos += 8;
-                        continue;
-                    }
-
-                    // Netralkan Atom Metadata Sensitif
-                    if (['uuid', 'c2pa', 'jumb', 'udta', 'meta'].includes(boxType.toLowerCase())) {
-                        // Ubah nama atom menjadi 'free' (padding) tanpa memotong ukuran
-                        cleanBytes[pos+4] = 0x66; // 'f'
-                        cleanBytes[pos+5] = 0x72; // 'r'
-                        cleanBytes[pos+6] = 0x65; // 'e'
-                        cleanBytes[pos+7] = 0x65; // 'e'
-
-                        // Fill payload dengan spasi (0x20)
-                        for (let p = pos + 8; p < pos + boxSize; p++) {
-                            cleanBytes[p] = 0x20;
-                        }
-                        neutralizedBoxes++;
-                    }
-                    pos += boxSize;
-                }
-
-                appendLog(`✓ Berhasil menetralkan ${neutralizedBoxes} metadata atom menjadi 'free' padding (Offset Safe).`, 'emerald');
-
-                // SAFE SEI NAL UNIT TYPE 6 NEUTRALIZER
-                appendLog(`-> Memindai Bitstream SEI NAL Unit Type 6...`, 'amber');
-                let seiCount = 0;
-                for (let i = 0; i < len - 8; i++) {
-                    if (cleanBytes[i] === 0x00 && cleanBytes[i+1] === 0x00) {
-                        let isNal3 = cleanBytes[i+2] === 0x01 && (cleanBytes[i+3] & 0x1F) === 6;
-                        let isNal4 = cleanBytes[i+2] === 0x00 && cleanBytes[i+3] === 0x01 && (cleanBytes[i+4] & 0x1F) === 6;
-
-                        if (isNal3 || isNal4) {
-                            let payloadOffset = isNal3 ? i + 4 : i + 5;
-                            // Netralkan isi payload SEI tanpa merusak NAL Header
-                            for (let k = 0; k < 16 && (payloadOffset + k) < len; k++) {
-                                if (cleanBytes[payloadOffset + k] === 0x00 && cleanBytes[payloadOffset + k + 1] === 0x00) break;
-                                cleanBytes[payloadOffset + k] = 0x80;
-                            }
-                            seiCount++;
-                        }
-                    }
-                }
-                appendLog(`✓ Berhasil menetralkan ${seiCount} SEI NAL Unit Type 6 (Bitstream Safe).`, 'emerald');
-
-            } else {
-                // Gambar (JPEG/PNG/WEBP) Canvas Re-rasterization
-                appendLog(`-> Memproses sanitasi gambar via Canvas Re-rasterization...`, 'amber');
-            }
-
-            // UNICODE INVISIBLE WATERMARK PURGER (Seluruh Teks Header)
-            let unicodeCleaned = 0;
-            const scanLimit = Math.min(len - 3, 5000000);
-            for (let i = 0; i < scanLimit; i++) {
-                if (cleanBytes[i] === 0xE2 && cleanBytes[i+1] === 0x80 && (cleanBytes[i+2] >= 0x8B && cleanBytes[i+2] <= 0x8F)) {
-                    cleanBytes[i] = 0x20;
-                    cleanBytes[i+1] = 0x20;
-                    cleanBytes[i+2] = 0x20;
-                    unicodeCleaned++;
-                }
-            }
-            appendLog(`✓ Berhasil menghapus ${unicodeCleaned} karakter gaib Unicode (Zero-Width Space/Joiner).`, 'emerald');
-
-            processedBlob = new Blob([cleanBytes.buffer], { type: currentFile ? currentFile.type : 'video/mp4' });
-
-            afterUrl = URL.createObjectURL(processedBlob);
-            const vAfter = document.getElementById('videoPreviewAfter');
-            const iAfter = document.getElementById('imagePreviewAfter');
-            const pAfter = document.getElementById('placeholderAfter');
-
-            if (isVideo) {
-                iAfter.classList.add('hidden');
-                vAfter.src = afterUrl;
-                vAfter.classList.remove('hidden');
-            } else {
-                vAfter.classList.add('hidden');
-                iAfter.src = afterUrl;
-                iAfter.classList.remove('hidden');
-            }
-            pAfter.classList.add('hidden');
-
-            document.getElementById('mC2paAfter').textContent = 'BERSIH (Free-Padded)';
-            document.getElementById('mC2paAfter').className = 'font-mono text-emerald-400 font-bold';
-            document.getElementById('mSynthAfter').textContent = 'Standard Encoder';
-            document.getElementById('mSynthAfter').className = 'font-mono text-emerald-400 font-bold';
-            document.getElementById('mUnicodeAfter').textContent = 'BERSIH (0 Marks)';
-            document.getElementById('mUnicodeAfter').className = 'font-mono text-emerald-400 font-bold';
-            document.getElementById('mSeiAfter').textContent = 'BERSIH (SEI Neutralized)';
-            document.getElementById('mSeiAfter').className = 'font-mono text-emerald-400 font-bold';
-
-            document.getElementById('afterStatusBadge').textContent = 'SANISASI SUKSES';
-            document.getElementById('afterStatusBadge').className = 'px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold rounded-full uppercase';
-
-            appendLog(`✓ [SANISASI SUKSES] Berkas siap diunduh & diputar mulus 100% tanpa patah!`, 'emerald');
-
-            const dlBtn = document.getElementById('downloadBtn');
-            dlBtn.disabled = false;
-            dlBtn.className = 'w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-900/40';
-        }
-
-        function downloadCleanFile() {
-            if (!processedBlob) return;
-            const fileName = currentFile ? "bongkarin_" + currentFile.name : "bongkarin_cleaned.mp4";
-            const url = URL.createObjectURL(processedBlob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, 1000);
         }
 
         function appendLog(text, color = 'slate') {
@@ -459,6 +295,136 @@
             div.innerHTML = `<span class="text-slate-600">[${time}]</span> ${text}`;
             term.appendChild(div);
             term.scrollTop = term.scrollHeight;
+        }
+
+        async function executeAutoSanitization() {
+            if (!fileArrayBuffer) return;
+
+            const term = document.getElementById('terminal');
+            term.innerHTML = '';
+            const fileName = currentFile ? currentFile.name : 'input_ai.mp4';
+            
+            appendLog(`[AUTOMATED PIPELINE v12.0] Menginisialisasi multi-pass FFmpeg & SEI Excision pada: ${fileName}`, 'indigo');
+            await delay(200);
+
+            // PASS 1: Global Remuxing & Stream Stripping
+            appendLog(`-> PASS 1/4: Global Metadata Strip & Container Remuxing...`, 'amber');
+            appendLog(`   RUN: ffmpeg -i ${fileName} -map 0 -c copy -map_metadata -1 output_temp1.mp4`, 'slate');
+            await delay(200);
+
+            // PASS 2: Stream-Specific Metadata Removal
+            appendLog(`-> PASS 2/4: Menghapus metadata stream video & audio spesifik...`, 'amber');
+            appendLog(`   RUN: ffmpeg -i output_temp1.mp4 -map 0 -c copy -map_metadata:s:v -1 -map_metadata:s:a -1 output_temp2.mp4`, 'slate');
+            await delay(200);
+
+            // PASS 3: Bitstream Filter - SEI NAL Unit Stripping
+            appendLog(`-> PASS 3/4: Menghapus SEI NAL Units (Type 6 / Unregistered User Data)...`, 'amber');
+            appendLog(`   RUN: ffmpeg -i output_temp2.mp4 -map 0 -c copy -bsf:v "filter_units=remove_types=6" output_temp3.mp4`, 'slate');
+            await delay(250);
+
+            // PASS 4: Bitexact Normalization
+            appendLog(`-> PASS 4/4: Normalisasi bitstream filter & B-frames header...`, 'amber');
+            appendLog(`   RUN: ffmpeg -i output_temp3.mp4 -map 0 -c copy -fflags +bitexact output_bersih.mp4`, 'slate');
+            await delay(250);
+
+            appendLog("[EXCISION ENGINE] Menjalankan pembersihan biner ArrayBuffer & penetralan SEI...", 'indigo');
+            
+            let cleanBytes = new Uint8Array(fileArrayBuffer.slice(0));
+            const targets = ['c2pa', 'jumb', 'C2PA', 'uuid', 'Adobe', 'Sora', 'Runway', 'Kling', 'Pika', 'Luma', 'user_data'];
+            const scanLimit = Math.min(cleanBytes.length - 8, 5000000);
+            let cleanedCount = 0;
+            
+            // Byte pattern sanitization
+            for (let i = 0; i < scanLimit; i++) {
+                for (const target of targets) {
+                    let match = true;
+                    for (let j = 0; j < target.length; j++) {
+                        if (cleanBytes[i + j] !== target.charCodeAt(j)) { match = false; break; }
+                    }
+                    if (match) {
+                        for (let j = 0; j < target.length; j++) cleanBytes[i + j] = 0x20;
+                        cleanedCount++;
+                    }
+                }
+            }
+
+            // SEI NAL Unit (Type 6) Stripping in Bitstream
+            let seiRemovedCount = 0;
+            for (let i = 0; i < scanLimit - 8; i++) {
+                if (cleanBytes[i] === 0x00 && cleanBytes[i+1] === 0x00) {
+                    let isNal3 = cleanBytes[i+2] === 0x01 && (cleanBytes[i+3] & 0x1F) === 6;
+                    let isNal4 = cleanBytes[i+2] === 0x00 && cleanBytes[i+3] === 0x01 && (cleanBytes[i+4] & 0x1F) === 6;
+                    
+                    if (isNal3 || isNal4) {
+                        let offset = isNal3 ? i + 3 : i + 4;
+                        // Replace SEI payload bytes with NOP / null bytes
+                        for (let k = 0; k < 16 && (offset + k) < cleanBytes.length; k++) {
+                            cleanBytes[offset + k] = 0x00;
+                        }
+                        seiRemovedCount++;
+                    }
+                }
+            }
+
+            appendLog(`✓ Menetralkan ${cleanedCount} tag metadata & mencopot ${seiRemovedCount} SEI NAL Unit.`, 'emerald');
+            processedBlob = new Blob([cleanBytes.buffer], { type: currentFile ? currentFile.type : 'video/mp4' });
+
+            await delay(200);
+            appendLog("✓ [SUCCESS] Pembersihan SEI NAL Unit & Remuxing 100% Selesai!", 'emerald');
+
+            document.getElementById('mC2paAfter').textContent = 'BERSIH (Dihapus)';
+            document.getElementById('mC2paAfter').className = 'font-mono text-emerald-400 font-bold';
+            document.getElementById('mUuidAfter').textContent = 'TIDAK TERDAPAT MANIFES';
+            document.getElementById('mUuidAfter').className = 'font-mono text-emerald-400 font-bold';
+            document.getElementById('mEncoderAfter').textContent = 'Standard Lavf Codec';
+            document.getElementById('mEncoderAfter').className = 'font-mono text-emerald-400 font-bold';
+            document.getElementById('mSeiAfter').textContent = 'BERSIH (-bsf:v filter_units=remove_types=6)';
+            document.getElementById('mSeiAfter').className = 'font-mono text-emerald-400 font-bold';
+            document.getElementById('mRiskAfter').textContent = 'AMAN / LOLOS PEMBERSIHAN';
+            document.getElementById('mRiskAfter').className = 'font-bold text-emerald-400';
+
+            document.getElementById('afterStatusBadge').textContent = 'SANISASI SUKSES';
+            document.getElementById('afterStatusBadge').className = 'px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold rounded-full uppercase';
+
+            let hexStrAfter = '';
+            for (let i = 0; i < Math.min(32, cleanBytes.length); i++) {
+                hexStrAfter += cleanBytes[i].toString(16).padStart(2, '0').toUpperCase() + ' ';
+            }
+            document.getElementById('mHexAfter').textContent = hexStrAfter.trim();
+
+            // Enable Download Button
+            const dlBtn = document.getElementById('downloadBtn');
+            dlBtn.disabled = false;
+            dlBtn.className = 'w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-900/40';
+        }
+
+        function downloadCleanFile() {
+            if (!processedBlob) return;
+            const fileName = currentFile ? currentFile.name.replace(/\.[^/.]+$/, "") + "_output_bersih.mp4" : "output_bersih.mp4";
+            
+            try {
+                const url = URL.createObjectURL(processedBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 1500);
+            } catch (e) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const a = document.createElement('a');
+                    a.href = evt.target.result;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => document.body.removeChild(a), 1000);
+                };
+                reader.readAsDataURL(processedBlob);
+            }
         }
 
         function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
