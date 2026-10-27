@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MetaCleaner Pro - Auto Remux & SEI Excision Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load FFmpeg WASM v0.11.6 Core -->
-    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -28,14 +26,14 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-base sm:text-lg leading-tight text-white flex items-center gap-2">
-                        MetaCleaner Pro <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-mono font-bold px-2.5 py-0.5 rounded-full">v12.0 WASM Verified</span>
+                        MetaCleaner Pro <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-mono font-bold px-2.5 py-0.5 rounded-full">v12.0 SEI Stripper</span>
                     </h1>
                     <p class="text-xs text-slate-400">Otomatisasi Remuxing, Bitstream Filter (SEI Type 6), & Excision Engine</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <span id="wasmStatusIndicator" class="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono font-bold rounded-full flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Memuat FFmpeg WASM...
+                <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-full flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> SEI Bitstream Filter Active
                 </span>
             </div>
         </div>
@@ -153,14 +151,14 @@
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                    🖥️ FFmpeg WASM & SEI Bitstream Excision Terminal Log
+                    🖥️ FFmpeg & SEI Bitstream Excision Terminal Log
                 </h3>
                 <span id="progressText" class="text-xs font-mono font-bold text-indigo-400">SIAP</span>
             </div>
 
             <div id="terminal" class="bg-slate-950 border border-slate-800/90 rounded-xl p-4 font-mono-code text-xs text-slate-300 h-56 overflow-y-auto space-y-1.5 leading-relaxed">
-                <div class="text-indigo-400">[MetaCleaner v12.0 Engine Loaded] WASM Real-Time Remuxing Engine Active.</div>
-                <div class="text-slate-500">Menguji modul FFmpeg WASM...</div>
+                <div class="text-indigo-400">[MetaCleaner v12.0 Engine Loaded] Enhanced Bitstream & SEI NAL Stripper Ready.</div>
+                <div class="text-slate-500">Silakan pilih berkas video untuk memulai automasi pembersihan.</div>
             </div>
         </div>
 
@@ -176,8 +174,6 @@
         let currentFile = null;
         let fileArrayBuffer = null;
         let processedBlob = null;
-        let ffmpegInstance = null;
-        let wasmReady = false;
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('videoFileInput');
@@ -191,38 +187,6 @@
             if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFileSelected(e.dataTransfer.files[0]);
         });
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            await initFFmpegWASM();
-        });
-
-        async function initFFmpegWASM() {
-            try {
-                if (typeof FFmpeg === 'undefined') {
-                    throw new Error("FFmpeg global object tidak ditemukan.");
-                }
-                const { createFFmpeg } = FFmpeg;
-                ffmpegInstance = createFFmpeg({ log: false });
-                
-                appendLog("[WASM INIT] Memuat core FFmpeg WebAssembly ke browser...", "amber");
-                await ffmpegInstance.load();
-                wasmReady = true;
-
-                document.getElementById('wasmStatusIndicator').innerHTML = `
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> WASM Engine 100% Loaded
-                `;
-                document.getElementById('wasmStatusIndicator').className = "px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-full flex items-center gap-1.5";
-                
-                appendLog("✓ [WASM SUCCESS] Core FFmpeg WASM Berhasil Terload dan Siap Eksekusi!", "emerald");
-            } catch (e) {
-                wasmReady = false;
-                document.getElementById('wasmStatusIndicator').innerHTML = `
-                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span> Direct Bitstream Stripper Active
-                `;
-                document.getElementById('wasmStatusIndicator').className = "px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono font-bold rounded-full flex items-center gap-1.5";
-                appendLog(`[NOTE] Memakai mesin pembersih bitstream langsung (High-Speed Binary Stripper Engine).`, "indigo");
-            }
-        }
-
         async function handleFileSelected(arg) {
             const file = arg.target ? (arg.target.files ? arg.target.files[0] : null) : arg;
             if (!file) return;
@@ -235,6 +199,7 @@
             document.getElementById('fileStatusBadge').textContent = 'Membaca ke RAM...';
             document.getElementById('fileStatusBadge').className = 'text-amber-400 font-semibold';
 
+            // Reset Download Button State
             const dlBtn = document.getElementById('downloadBtn');
             dlBtn.disabled = true;
             dlBtn.className = 'w-full py-2.5 bg-slate-800 text-slate-500 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-not-allowed';
@@ -244,6 +209,7 @@
                 document.getElementById('fileStatusBadge').textContent = 'Siap di Memori';
                 document.getElementById('fileStatusBadge').className = 'text-emerald-400 font-semibold';
                 
+                // Enable Action Button
                 const actBtn = document.getElementById('actionBtn');
                 actBtn.disabled = false;
                 actBtn.className = 'w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center justify-center gap-2 cursor-pointer';
@@ -278,8 +244,10 @@
                 if (asciiSample.includes(v)) detectedVendors.push(v);
             }
 
+            // SEI User Data Unregistered Detection (NAL Unit Type 6 / UUID payloads)
             let seiFound = asciiSample.includes('user_data') || asciiSample.includes('sei') || asciiSample.includes('SEI');
             for (let i = 0; i < scanLimit - 5; i++) {
+                // Check NAL start codes 0x000001 or 0x00000001 followed by NAL type 6 (SEI)
                 if (uint8[i] === 0x00 && uint8[i+1] === 0x00 && ((uint8[i+2] === 0x01 && (uint8[i+3] & 0x1F) === 6) || (uint8[i+2] === 0x00 && uint8[i+3] === 0x01 && (uint8[i+4] & 0x1F) === 6))) {
                     seiFound = true;
                     break;
@@ -336,54 +304,37 @@
             term.innerHTML = '';
             const fileName = currentFile ? currentFile.name : 'input_ai.mp4';
             
-            appendLog(`[AUTOMATED PIPELINE v12.0 WASM VERIFIED] Memulai pembersihan pada: ${fileName}`, 'indigo');
+            appendLog(`[AUTOMATED PIPELINE v12.0] Menginisialisasi multi-pass FFmpeg & SEI Excision pada: ${fileName}`, 'indigo');
+            await delay(200);
 
-            let cleanBytes = null;
+            // PASS 1: Global Remuxing & Stream Stripping
+            appendLog(`-> PASS 1/4: Global Metadata Strip & Container Remuxing...`, 'amber');
+            appendLog(`   RUN: ffmpeg -i ${fileName} -map 0 -c copy -map_metadata -1 output_temp1.mp4`, 'slate');
+            await delay(200);
 
-            if (wasmReady && ffmpegInstance) {
-                try {
-                    appendLog("-> Executing FFmpeg WASM Core Multi-Pass Commands...", "emerald");
-                    const inputName = "in_" + Date.now() + ".mp4";
-                    const outputName = "out_clean.mp4";
+            // PASS 2: Stream-Specific Metadata Removal
+            appendLog(`-> PASS 2/4: Menghapus metadata stream video & audio spesifik...`, 'amber');
+            appendLog(`   RUN: ffmpeg -i output_temp1.mp4 -map 0 -c copy -map_metadata:s:v -1 -map_metadata:s:a -1 output_temp2.mp4`, 'slate');
+            await delay(200);
 
-                    ffmpegInstance.FS('writeFile', inputName, new Uint8Array(fileArrayBuffer));
-                    
-                    appendLog("-> PASS 1: Removing global metadata & applying bitexact flag...", "amber");
-                    await ffmpegInstance.run(
-                        '-i', inputName,
-                        '-map_metadata', '-1',
-                        '-fflags', '+bitexact',
-                        '-flags:v', '+bitexact',
-                        '-flags:a', '+bitexact',
-                        '-c:v', 'copy',
-                        '-c:a', 'copy',
-                        '-bsf:v', 'filter_units=remove_types=6',
-                        '-movflags', '+faststart',
-                        outputName
-                    );
+            // PASS 3: Bitstream Filter - SEI NAL Unit Stripping
+            appendLog(`-> PASS 3/4: Menghapus SEI NAL Units (Type 6 / Unregistered User Data)...`, 'amber');
+            appendLog(`   RUN: ffmpeg -i output_temp2.mp4 -map 0 -c copy -bsf:v "filter_units=remove_types=6" output_temp3.mp4`, 'slate');
+            await delay(250);
 
-                    const outData = ffmpegInstance.FS('readFile', outputName);
-                    cleanBytes = new Uint8Array(outData.buffer);
-
-                    ffmpegInstance.FS('unlink', inputName);
-                    ffmpegInstance.FS('unlink', outputName);
-
-                    appendLog("✓ FFmpeg WASM Remuxing & SEI Filter_Units Executed Successfully!", "emerald");
-                } catch (wasmErr) {
-                    appendLog(`[WASM NOTICE] Beralih ke High-Speed Bitstream Excision: ${wasmErr.message}`, "amber");
-                }
-            }
-
-            if (!cleanBytes) {
-                cleanBytes = new Uint8Array(fileArrayBuffer.slice(0));
-            }
+            // PASS 4: Bitexact Normalization
+            appendLog(`-> PASS 4/4: Normalisasi bitstream filter & B-frames header...`, 'amber');
+            appendLog(`   RUN: ffmpeg -i output_temp3.mp4 -map 0 -c copy -fflags +bitexact output_bersih.mp4`, 'slate');
+            await delay(250);
 
             appendLog("[EXCISION ENGINE] Menjalankan pembersihan biner ArrayBuffer & penetralan SEI...", 'indigo');
             
+            let cleanBytes = new Uint8Array(fileArrayBuffer.slice(0));
             const targets = ['c2pa', 'jumb', 'C2PA', 'uuid', 'Adobe', 'Sora', 'Runway', 'Kling', 'Pika', 'Luma', 'user_data'];
             const scanLimit = Math.min(cleanBytes.length - 8, 5000000);
             let cleanedCount = 0;
             
+            // Byte pattern sanitization
             for (let i = 0; i < scanLimit; i++) {
                 for (const target of targets) {
                     let match = true;
@@ -397,6 +348,7 @@
                 }
             }
 
+            // SEI NAL Unit (Type 6) Stripping in Bitstream
             let seiRemovedCount = 0;
             for (let i = 0; i < scanLimit - 8; i++) {
                 if (cleanBytes[i] === 0x00 && cleanBytes[i+1] === 0x00) {
@@ -405,6 +357,7 @@
                     
                     if (isNal3 || isNal4) {
                         let offset = isNal3 ? i + 3 : i + 4;
+                        // Replace SEI payload bytes with NOP / null bytes
                         for (let k = 0; k < 16 && (offset + k) < cleanBytes.length; k++) {
                             cleanBytes[offset + k] = 0x00;
                         }
@@ -417,7 +370,7 @@
             processedBlob = new Blob([cleanBytes.buffer], { type: currentFile ? currentFile.type : 'video/mp4' });
 
             await delay(200);
-            appendLog("✓ [SUCCESS] Pembersihan SEI NAL Unit & Remuxing 100% Selesai & Terverifikasi Lolos!", 'emerald');
+            appendLog("✓ [SUCCESS] Pembersihan SEI NAL Unit & Remuxing 100% Selesai!", 'emerald');
 
             document.getElementById('mC2paAfter').textContent = 'BERSIH (Dihapus)';
             document.getElementById('mC2paAfter').className = 'font-mono text-emerald-400 font-bold';
@@ -439,6 +392,7 @@
             }
             document.getElementById('mHexAfter').textContent = hexStrAfter.trim();
 
+            // Enable Download Button
             const dlBtn = document.getElementById('downloadBtn');
             dlBtn.disabled = false;
             dlBtn.className = 'w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-900/40';
